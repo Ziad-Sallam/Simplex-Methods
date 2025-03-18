@@ -4,16 +4,18 @@ class Simplex():
     def __init__(self, A, b, Z , objective):
         self.objective = objective # 1 for maximization, -1 for minimization
         self.m = len(A) # number of slack variables
-        self.n = len(A[0]) # number of variables
-        identity = np.eye(self.m)
-        A = np.hstack((A, identity))
+        self.n = len(A[0]) # number of variables 
         self.A = np.array(A, dtype=float)  # coefficient matrix
         self.b = np.array(b, dtype=float)  # RHS
-        Z = np.append(Z, np.zeros(self.m))
         self.Z = np.array(Z, dtype=float) * -1 # objective vector
         self.Z_final = 0
         self.BV = [i + self.n for i in range(self.m)]  # Basic variables
 
+    def addingSlackVars(self):
+        identity = np.eye(self.m)
+        self.A = np.hstack((self.A, identity))
+        self.Z = np.append(self.Z, np.zeros(self.m))
+    
     def method(self):
         optimal = False    
         while not optimal:
@@ -67,6 +69,7 @@ def main():
     Z = [3, 9]
     objective = 1 #min
     simplex = Simplex(A, b, Z, objective)
+    simplex.addingSlackVars()
     maxValues, Z_final, status = simplex.method()
 
     print("Max values of variables:", maxValues)
