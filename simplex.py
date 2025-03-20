@@ -10,7 +10,7 @@ class Simplex():
         """
         self.objective = objective # 1 for maximization, -1 for minimization
         self.m = len(A) # number of slack variables
-        self.n = len(A[0]) # number of variables 
+        self.n = len(A[0]) # number of variables
         self.A = np.array(A, dtype=float)  # coefficient matrix
         self.b = np.array(b, dtype=float)  # RHS
         self.Z = np.array(Z, dtype=float) * -1 # objective vector
@@ -23,14 +23,14 @@ class Simplex():
         self.Z = np.append(self.Z, np.zeros(self.m))
     
     def method(self):
-        optimal = False    
+        optimal = False
         while not optimal:
             if self.objective == 1:
                 pivotCol = np.argmin(self.Z)
             else:
                 pivotCol = np.argmax(self.Z)
 
-            if np.all(self.A[:, pivotCol] <= 0):                
+            if np.all(self.A[:, pivotCol] <= 0):
                 return None, None, "Unbounded solution"
 
             ratios = np.zeros(self.m)
@@ -60,7 +60,7 @@ class Simplex():
             if self.objective == 1:
                 optimal = np.all(self.Z >= 0)
             else:
-                optimal = np.all(self.Z <= 0)    
+                optimal = np.all(self.Z <= 0)
 
         maxValues = np.zeros(self.n)
         for i in range(self.m):
@@ -80,6 +80,6 @@ def main():
 
     print("Max values of variables:", maxValues)
     print("Final value of Z:", Z_final)
-    print("Status:", status)    
+    print("Status:", status)
 
 #main()
