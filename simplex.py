@@ -2,6 +2,12 @@ import numpy as np
 
 class Simplex():
     def __init__(self, A, b, Z , objective):
+        """
+        :param A: Coefficient of constraints
+        :param b: Right hand side
+        :param Z: Coefficient of the objective function
+        :param objective: 1 to maximization ,-1 for minimization
+        """
         self.objective = objective # 1 for maximization, -1 for minimization
         self.m = len(A) # number of slack variables
         self.n = len(A[0]) # number of variables 
@@ -76,4 +82,4 @@ def main():
     print("Final value of Z:", Z_final)
     print("Status:", status)    
 
-main()
+#main()
