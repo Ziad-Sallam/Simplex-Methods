@@ -33,9 +33,9 @@ class BigMMethod(Simplex):
         return maxValues, Z_final, status
 
 def main():
-    A = [[1, 4], [1, 2]]
-    b = [8, 4]
-    Z = [3, 9]
+    A = [[-1, 1], [1, -2], [-1, -1]]
+    b = [-1, -2, -3]
+    Z = [2, 1]
     objective = 1  # 1 for maximization, -1 for minimization
     big_m = BigMMethod(A, b, Z, objective)
     big_m.addingSlackVars()
