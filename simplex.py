@@ -70,12 +70,13 @@ class Simplex():
         return maxValues, self.Z_final, "optimum solution"
 
 def main():
-    A = [[1, 4], [1, 2]]
-    b = [8, 4]
-    Z = [3, 9]
-    objective = 1 #min
+    A = [[2, -5, 1, -1 , 1, 0], [1, 1, 1, 0 , 0, 1]]
+    b = [10, 7]
+    Z = [-3, 4, -2, 1, 0, 0]
+    objective = -1 #min
     simplex = Simplex(A, b, Z, objective)
-    simplex.addingSlackVars()
+   # simplex.addingSlackVars()
+    simplex.Z_final = 17
     maxValues, Z_final, status = simplex.method()
 
     print("Max values of variables:", maxValues)
