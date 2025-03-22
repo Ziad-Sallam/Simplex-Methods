@@ -115,7 +115,7 @@ class Ui_MainWindow(object):
             for j in range(0,10):
                 x = QtWidgets.QSpinBox(parent=self.centralwidget)
                 x.setObjectName("constraint" + str(j))
-                x.setGeometry(QtCore.QRect(40 + 100 * j, 300+ 40*i, 0, 20))
+                x.setGeometry(QtCore.QRect(40 + 100 * j, 400+ 40*i, 0, 20))
                 x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
 
                 l = QtWidgets.QLabel(parent=self.centralwidget)
@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
                 font.setPointSize(12)
                 x.setMaximumWidth(60)
                 l.setFont(font)
-                l.setGeometry(QtCore.QRect(100 + 100 * j, 300+40*i, 40, 20))
+                l.setGeometry(QtCore.QRect(100 + 100 * j, 400+40*i, 40, 20))
                 labels.append(l)
                 const.append(x)
             self.constraints.append(const)
@@ -136,20 +136,20 @@ class Ui_MainWindow(object):
             q.addItem("≤")
             q.addItem("≥")
             q.addItem("=")
-            q.setGeometry(QtCore.QRect(1050, 300+40*i, 40, 20))
+            q.setGeometry(QtCore.QRect(1050, 400+40*i, 40, 20))
             q.setFont(font)
             self.constraintSigns.append(q)
 
             ans = QtWidgets.QSpinBox(parent=self.centralwidget)
             ans.setObjectName("ans sign" + str(i))
-            ans.setGeometry(QtCore.QRect(1100, 300+40*i, 40, 20))
+            ans.setGeometry(QtCore.QRect(1100, 400+40*i, 40, 20))
             ans.setFont(font)
             self.constrainValues.append(ans)
 
         self.typeLabel = QtWidgets.QLabel(parent=self.centralwidget)
         self.typeLabel.setObjectName("typeLabel")
         self.typeLabel.setFont(font)
-        self.typeLabel.setGeometry(QtCore.QRect(40, 650, 200, 20))
+        self.typeLabel.setGeometry(QtCore.QRect(1250, 220, 200, 20))
         self.typeLabel.setText("Decision Variables Types: ")
 
         self.types = []
@@ -160,11 +160,11 @@ class Ui_MainWindow(object):
             q.addItem('≥ 0')
             q.addItem("URV")
             q.setFont(font)
-            q.setGeometry(QtCore.QRect(65+120*i, 800, 70, 20))
+            q.setGeometry(QtCore.QRect(1340, 260 + 40*i, 70, 20))
             l = QtWidgets.QLabel(parent=self.centralwidget)
             l.setText('x' + str(i) )
             l.setFont(font)
-            l.setGeometry(QtCore.QRect(40 + 120 * i, 800, 40, 20))
+            l.setGeometry(QtCore.QRect(1300, 260 + 40*i, 40, 20))
             self.types.append(q)
             self.typeLabels.append(l)
 

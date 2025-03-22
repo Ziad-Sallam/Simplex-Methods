@@ -31,8 +31,8 @@ def numberOfVariablesChange():
 
     for i in range(0,n_c):
         ui.constraintsLabels[i][n-1].setText("x" + str(n-1))
-        ui.constraintSigns[i].setGeometry(QtCore.QRect(40+100*n, 300 + 40 * i, 40, 20))
-        ui.constrainValues[i].setGeometry(QtCore.QRect(80+100*n, 300 + 40 * i, 80, 20))
+        ui.constraintSigns[i].setGeometry(QtCore.QRect(40+100*n, 400 + 40 * i, 40, 20))
+        ui.constrainValues[i].setGeometry(QtCore.QRect(80+100*n, 400 + 40 * i, 80, 20))
         ui.constraintSigns[i].show()
         ui.constrainValues[i].show()
 
