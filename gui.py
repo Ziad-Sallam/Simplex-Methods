@@ -160,11 +160,11 @@ class Ui_MainWindow(object):
             q.addItem('≥ 0')
             q.addItem("URV")
             q.setFont(font)
-            q.setGeometry(QtCore.QRect(65+120*i, 900, 70, 20))
+            q.setGeometry(QtCore.QRect(65+120*i, 800, 70, 20))
             l = QtWidgets.QLabel(parent=self.centralwidget)
             l.setText('x' + str(i) )
             l.setFont(font)
-            l.setGeometry(QtCore.QRect(40 + 120 * i, 900, 40, 20))
+            l.setGeometry(QtCore.QRect(40 + 120 * i, 800, 40, 20))
             self.types.append(q)
             self.typeLabels.append(l)
 
