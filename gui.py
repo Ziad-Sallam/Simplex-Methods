@@ -7,13 +7,13 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import QAbstractSpinBox
+from PyQt6.QtWidgets import QAbstractSpinBox, QScrollArea
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1200, 800)
+        MainWindow.resize(1150, 800)
         MainWindow.setIconSize(QtCore.QSize(30, 30))
         MainWindow.setAnimated(True)
         MainWindow.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
@@ -80,7 +80,7 @@ class Ui_MainWindow(object):
         self.objectiveFunctionLabel.setFont(font)
         self.objectiveFunctionLabel.setObjectName("objectiveFunctionLabel")
         self.constainsLabel = QtWidgets.QLabel(parent=self.centralwidget)
-        self.constainsLabel.setGeometry(QtCore.QRect(40, 220, 91, 16))
+        self.constainsLabel.setGeometry(QtCore.QRect(40, 320, 91, 16))
         font = QtGui.QFont()
         font.setFamily("Comic Sans MS")
         font.setPointSize(12)
@@ -88,68 +88,102 @@ class Ui_MainWindow(object):
         self.constainsLabel.setObjectName("constainsLabel")
         MainWindow.setCentralWidget(self.centralwidget)
 
-        ###########################################################################
-        self.objective =[]
-        self.objectiveLabels =[]
-        for i in range(0,10):
-            x = QtWidgets.QSpinBox(parent=self.centralwidget)
+        self.numberOfObjectives = QtWidgets.QSpinBox(parent=self.centralwidget)
+        self.numberOfObjectives.setMinimum(1)
+        self.numberOfObjectives.setMaximum(10)
+        self.numberOfObjectives.setObjectName("numberOfObjectives")
+        self.numberOfObjectives.setGeometry(QtCore.QRect(1000, 35, 91, 20))
 
-            x.setObjectName("objective" + str(i))
-            x.setGeometry(QtCore.QRect(40 + 100*i, 190, 0, 20))
-            x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
-            l = QtWidgets.QLabel(parent=self.centralwidget)
-            l.setText('x' + str(i + 1) +' +')
-            x.setMaximumWidth(60)
-            l.setFont(font)
-            l.setGeometry(QtCore.QRect(100 + 100 * i, 190, 40, 20))
-            self.objective.append(x)
-            self.objectiveLabels.append(l)
+        self.numberOfObjectiveLabel = QtWidgets.QLabel(parent=self.centralwidget)
+        self.numberOfObjectiveLabel.setGeometry(QtCore.QRect(850, 35, 151, 20))
+        self.numberOfObjectiveLabel.setObjectName("numberOfObjectiveLabel")
+        self.numberOfObjectiveLabel.setText("number of goals: ")
+        self.numberOfObjectiveLabel.setFont(font)
+
+
+        ###########################################################################
+        self.ObjectiveScroll = QtWidgets.QScrollArea(parent=self.centralwidget)
+        self.ObjectiveScroll.setWidgetResizable(True)
+        self.ObjectiveScroll.setGeometry(QtCore.QRect(40, 190, 1060, 130))
+        objective_widget = QtWidgets.QWidget()
+        objective_widget.setFixedSize(1040, 399)
+        self.ObjectiveScroll.setWidget(objective_widget)
+
+        self.objectives = []
+        self.objectiveLabels = []
+
+        for j in range(10):
+            objective =[]
+            objectiveLabels =[]
+            for i in range(0,10):
+                x = QtWidgets.QSpinBox(parent=objective_widget)
+
+                x.setObjectName("objective" + str(i))
+                x.setGeometry(QtCore.QRect( 40 + 100*i, 20+30*j, 0, 20))
+                x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+                l = QtWidgets.QLabel(parent=objective_widget)
+                l.setText('x' + str(i + 1) +' +')
+                x.setMaximumWidth(60)
+                l.setFont(font)
+                l.setGeometry(QtCore.QRect(100 +100 * i, 20+30*j, 40, 20))
+                objective.append(x)
+                objectiveLabels.append(l)
+            self.objectives.append(objective)
+            self.objectiveLabels.append(objectiveLabels)
 
         self.constraints = []
         self.constraintsLabels = []
         self.constraintSigns = []
         self.constrainValues= []
+
+        self.constrainsScroll = QtWidgets.QScrollArea(parent=self.centralwidget)
+        self.constrainsScroll.setWidgetResizable(True)
+        self.constrainsScroll.setGeometry(QtCore.QRect(40, 350, 1060, 300))
+        constraints_widget = QtWidgets.QWidget()
+        constraints_widget.setFixedSize(1200,399)
+        self.constrainsScroll.setWidget(constraints_widget)
+
         for i in range(0,10):
             const = []
             labels =[]
             for j in range(0,10):
-                x = QtWidgets.QSpinBox(parent=self.centralwidget)
+                x = QtWidgets.QSpinBox(parent=constraints_widget)
                 x.setObjectName("constraint" + str(j))
-                x.setGeometry(QtCore.QRect(40 + 100 * j, 400+ 40*i, 0, 20))
+                x.setGeometry(QtCore.QRect(40 + 100 * j,  20+40*i, 0, 20))
                 x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
 
-                l = QtWidgets.QLabel(parent=self.centralwidget)
+                l = QtWidgets.QLabel(parent=constraints_widget)
                 l.setText('x' + str(j + 1) + ' +')
                 font = QtGui.QFont()
                 font.setFamily("Comic Sans MS")
                 font.setPointSize(12)
                 x.setMaximumWidth(60)
                 l.setFont(font)
-                l.setGeometry(QtCore.QRect(100 + 100 * j, 400+40*i, 40, 20))
+                l.setGeometry(QtCore.QRect(100 + 100 * j, 20+40*i, 40, 20))
                 labels.append(l)
                 const.append(x)
             self.constraints.append(const)
             self.constraintsLabels.append(labels)
 
-            q = QtWidgets.QComboBox(parent=self.centralwidget)
+            q = QtWidgets.QComboBox(parent=constraints_widget)
             q.setObjectName("constraint sign" + str(i))
             q.addItem("≤")
             q.addItem("≥")
             q.addItem("=")
-            q.setGeometry(QtCore.QRect(1050, 400+40*i, 40, 20))
+            q.setGeometry(QtCore.QRect(1050, 20+40*i, 40, 20))
             q.setFont(font)
             self.constraintSigns.append(q)
 
-            ans = QtWidgets.QSpinBox(parent=self.centralwidget)
+            ans = QtWidgets.QSpinBox(parent=constraints_widget)
             ans.setObjectName("ans sign" + str(i))
-            ans.setGeometry(QtCore.QRect(1100, 400+40*i, 40, 20))
+            ans.setGeometry(QtCore.QRect(1100, 20+40*i, 40, 20))
             ans.setFont(font)
             self.constrainValues.append(ans)
 
         self.typeLabel = QtWidgets.QLabel(parent=self.centralwidget)
         self.typeLabel.setObjectName("typeLabel")
         self.typeLabel.setFont(font)
-        self.typeLabel.setGeometry(QtCore.QRect(1250, 220, 200, 20))
+        self.typeLabel.setGeometry(QtCore.QRect(40, 670, 200, 16))
         self.typeLabel.setText("Decision Variables Types: ")
 
         self.types = []
@@ -160,13 +194,20 @@ class Ui_MainWindow(object):
             q.addItem('≥ 0')
             q.addItem("URV")
             q.setFont(font)
-            q.setGeometry(QtCore.QRect(1340, 260 + 40*i, 70, 20))
+            q.setGeometry(QtCore.QRect(60+ 110*i, 700, 70, 20))
             l = QtWidgets.QLabel(parent=self.centralwidget)
             l.setText('x' + str(i) )
             l.setFont(font)
-            l.setGeometry(QtCore.QRect(1300, 260 + 40*i, 40, 20))
+            l.setGeometry(QtCore.QRect(40+ 110*i, 700, 40, 20))
             self.types.append(q)
             self.typeLabels.append(l)
+
+
+        self.solveBtn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.solveBtn.setObjectName("solveBtn")
+        self.solveBtn.setText("Solve")
+        self.solveBtn.setFont(font)
+        self.solveBtn.setGeometry(QtCore.QRect(800, 750, 200, 40))
 
         ###########################################################################
 
