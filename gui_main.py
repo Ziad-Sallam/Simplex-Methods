@@ -1,6 +1,9 @@
 import sys
-
+import subprocess
+import simplex
 from gui import *
+from simplex import Simplex
+
 
 def numberOfVariablesChange():
     n = ui.numberOfVariables.value()
@@ -51,9 +54,6 @@ def numberOfVariablesChange():
         ui.objectiveLabels[i][n-1].setText("x" + str(n-1))
 
 
-
-
-
 def handleMethodChange():
     n = ui.numberOfVariables.value()
     if ui.Method.currentText() == 'Preemptive Goal Programming':
@@ -72,6 +72,52 @@ def handleMethodChange():
             ui.goalValues[i].hide()
             ui.goalSigns[i].hide()
 
+def solve():
+    A = []
+    b =[]
+    Z =[]
+    ans =''
+    objective = -1
+    if ui.maximizeRadio.isChecked():
+        objective = 1
+
+    for i in range(ui.numberOfObjectives.value()):
+        ob =[]
+        for j in range(ui.numberOfVariables.value()):
+            ob.append(ui.objectives[i][j].value())
+        Z.append(ob)
+
+    for i in range(0,ui.numberOfConstraints.value()):
+        x =[]
+        for j in range(0,ui.numberOfVariables.value()):
+            x.append(ui.constraints[j][i].value())
+        A.append(x)
+        b.append(ui.constrainValues[i].value())
+
+    method = ui.Method.currentText()
+    if method == 'Simple Simplex':
+        smplx = Simplex(A,b,Z,objective)
+        smplx.addingSlackVars()
+        smplx.ansSetup()
+        maxValues, Z_final, status = smplx.method()
+        ans += 'steps:\n'
+        ans += smplx.steps
+        ans += f"\nMax values of variables: {maxValues}\n"
+        ans += f"Z final: {Z_final}\n"
+        ans += f"status: {status}\n"
+        with open("ans.txt","w") as f:
+            f.write(ans)
+        print(ans)
+
+
+        try:
+            subprocess.run(["notepad", "ans.txt"], shell=True, check=True)
+        except FileNotFoundError:
+            print("Notepad not found. Please open 'ans.txt' manually.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
@@ -84,6 +130,7 @@ if __name__ == "__main__":
     ui.numberOfConstraints.valueChanged.connect(numberOfVariablesChange)
     ui.numberOfObjectives.valueChanged.connect(numberOfVariablesChange)
     ui.Method.currentIndexChanged.connect(handleMethodChange)
+    ui.solveBtn.clicked.connect(solve)
 
     MainWindow.show()
     app.exec()

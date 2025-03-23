@@ -27,6 +27,7 @@ class Simplex():
     
     def method(self):
         optimal = False
+        self.addToSteps()
         while not optimal:
             if self.objective == 1:
                 pivotCol = np.argmin(self.Z)
@@ -54,7 +55,7 @@ class Simplex():
                     factor = self.A[i, pivotCol]
                     self.A[i] -= factor * self.A[pivotRow]
                     self.b[i] -= factor * self.b[pivotRow]
-                    self.addToSteps()
+
         
             factor = self.Z[pivotCol]
             self.Z -= factor * self.A[pivotRow]
@@ -66,6 +67,8 @@ class Simplex():
             else:
                 optimal = np.all(self.Z <= 0)
 
+            self.addToSteps()
+
         maxValues = np.zeros(self.n)
         for i in range(self.m):
             if self.BV[i] < self.n:
@@ -76,22 +79,23 @@ class Simplex():
 
     def ansSetup(self):
 
-        self.stp = []
         self.varNames = [f'x{i}' for i in range(0, self.n)]
         self.varNames.insert(0, '')
 
-        self.stp.append(self.varNames)
         for i in range(self.m):
             self.varNames.append(f'S{i}')
 
         self.varNames.append('RHS')
+
+
+    def addToSteps(self):
+        self.stp = []
+        self.stp.append(self.varNames)
         z = ['Z']
         for i in range(len(self.A[0])):
             z.append(self.Z[i])
         z.append(self.Z_final)
         self.stp.append(z)
-
-    def addToSteps(self):
 
         for i in range(len(self.A)):
             x = self.A[i]
@@ -119,4 +123,4 @@ def main():
     print('steps:')
     print(simplex.steps)
 
-main()
+#main()
