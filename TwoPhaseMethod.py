@@ -85,7 +85,6 @@ class TwoPhaseMethod(object):
         print("after phase one: ")
         self.b = smplx.b
 
-
         print(maxValues)
         print(smplx.Z)
         for x in self.tableau:

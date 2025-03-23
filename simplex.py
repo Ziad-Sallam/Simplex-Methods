@@ -78,13 +78,10 @@ class Simplex():
 
 
     def ansSetup(self):
-
         self.varNames = [f'x{i}' for i in range(0, self.n)]
         self.varNames.insert(0, '')
-
         for i in range(self.m):
             self.varNames.append(f'S{i}')
-
         self.varNames.append('RHS')
 
 
