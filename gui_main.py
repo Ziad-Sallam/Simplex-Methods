@@ -13,6 +13,8 @@ def numberOfVariablesChange():
         ui.constrainValues[i].hide()
         ui.types[i].hide()
         ui.typeLabels[i].hide()
+        ui.goalValues[i].hide()
+        ui.goalSigns[i].hide()
         for j in range(0,10):
             ui.constraints[i][j].hide()
             ui.constraintsLabels[i][j].hide()
@@ -23,8 +25,14 @@ def numberOfVariablesChange():
             ui.objectives[j][i].show()
             ui.objectiveLabels[j][i].setText("x"+str(i)+ ' +')
             ui.objectiveLabels[j][i].show()
+            if ui.Method.currentText() == 'Preemptive Goal Programming':
+                ui.goalSigns[j].show()
+                ui.goalSigns[j].setGeometry(QtCore.QRect(40+100*n, 20 + 40 * j, 40, 20))
+                ui.goalValues[j].setGeometry(QtCore.QRect(90 + 100 * n, 20 + 40 * j, 70, 20))
+                ui.goalValues[j].show()
         ui.types[i].show()
         ui.typeLabels[i].show()
+
 
         for j in range(0,n_c):
 
@@ -43,14 +51,26 @@ def numberOfVariablesChange():
         ui.objectiveLabels[i][n-1].setText("x" + str(n-1))
 
 
+
+
+
 def handleMethodChange():
-    if ui.Method.currentText() == 'Preemtive Goal Programming':
+    n = ui.numberOfVariables.value()
+    if ui.Method.currentText() == 'Preemptive Goal Programming':
         ui.numberOfObjectiveLabel.show()
         ui.numberOfObjectives.show()
+        for i in range(ui.numberOfObjectives.value()):
+            ui.goalValues[i].show()
+            ui.goalSigns[i].show()
+            ui.goalSigns[i].setGeometry(QtCore.QRect(40 + 100 * n, 20 + 40 * i, 40, 20))
+            ui.goalValues[i].setGeometry(QtCore.QRect(90 + 100 * n, 20 + 40 * i, 70, 20))
     else:
         ui.numberOfObjectiveLabel.hide()
         ui.numberOfObjectives.hide()
         ui.numberOfObjectives.setValue(1)
+        for i in range(len(ui.goalValues)):
+            ui.goalValues[i].hide()
+            ui.goalSigns[i].hide()
 
 
 if __name__ == "__main__":
@@ -64,5 +84,6 @@ if __name__ == "__main__":
     ui.numberOfConstraints.valueChanged.connect(numberOfVariablesChange)
     ui.numberOfObjectives.valueChanged.connect(numberOfVariablesChange)
     ui.Method.currentIndexChanged.connect(handleMethodChange)
+
     MainWindow.show()
     app.exec()

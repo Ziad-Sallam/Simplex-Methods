@@ -106,11 +106,13 @@ class Ui_MainWindow(object):
         self.ObjectiveScroll.setWidgetResizable(True)
         self.ObjectiveScroll.setGeometry(QtCore.QRect(40, 190, 1060, 130))
         objective_widget = QtWidgets.QWidget()
-        objective_widget.setFixedSize(1040, 399)
+        objective_widget.setFixedSize(1200, 399)
         self.ObjectiveScroll.setWidget(objective_widget)
 
         self.objectives = []
         self.objectiveLabels = []
+        self.goalSigns = []
+        self.goalValues = []
 
         for j in range(10):
             objective =[]
@@ -119,15 +121,31 @@ class Ui_MainWindow(object):
                 x = QtWidgets.QSpinBox(parent=objective_widget)
 
                 x.setObjectName("objective" + str(i))
-                x.setGeometry(QtCore.QRect( 40 + 100*i, 20+30*j, 0, 20))
+                x.setGeometry(QtCore.QRect( 40 + 100*i, 20+40*j, 0, 20))
                 x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
                 l = QtWidgets.QLabel(parent=objective_widget)
                 l.setText('x' + str(i + 1) +' +')
                 x.setMaximumWidth(60)
                 l.setFont(font)
-                l.setGeometry(QtCore.QRect(100 +100 * i, 20+30*j, 40, 20))
+                l.setGeometry(QtCore.QRect(100 +100 * i, 20+40*j, 40, 20))
                 objective.append(x)
                 objectiveLabels.append(l)
+
+            q = QtWidgets.QComboBox(parent=objective_widget)
+            q.setObjectName("constraint sign" + str(j))
+            q.addItem("≤")
+            q.addItem("≥")
+            q.addItem("=")
+            q.setGeometry(QtCore.QRect(1050, 20 + 40 * j, 40, 20))
+            q.setFont(font)
+            self.goalSigns.append(q)
+
+            ans = QtWidgets.QSpinBox(parent=objective_widget)
+            ans.setObjectName("ans sign" + str(j))
+            ans.setGeometry(QtCore.QRect(1100, 20 + 40 * j, 40, 20))
+            ans.setFont(font)
+            self.goalValues.append(ans)
+
             self.objectives.append(objective)
             self.objectiveLabels.append(objectiveLabels)
 
@@ -222,7 +240,7 @@ class Ui_MainWindow(object):
         self.Method.setItemText(0, _translate("MainWindow", "Simple Simplex"))
         self.Method.setItemText(1, _translate("MainWindow", "Big M Method"))
         self.Method.setItemText(2, _translate("MainWindow", "2 Phase Method"))
-        self.Method.setItemText(3, _translate("MainWindow", "Preemtive Goal Programming"))
+        self.Method.setItemText(3, _translate("MainWindow", "Preemptive Goal Programming"))
         self.maximizeRadio.setText(_translate("MainWindow", "Maximize ?"))
         self.numberOfConstrainsLabel.setText(_translate("MainWindow", "Number of constraints:"))
         self.objectiveFunctionLabel.setText(_translate("MainWindow", "Objective function :"))
