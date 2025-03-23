@@ -37,9 +37,100 @@ class BigMMethod(Simplex):
         return maxValues, Z_final, status
 
 def main():
+    # test 1
     A = [[-1, 1], [1, -2], [-1, -1]]
     b = [-1, -2, -3]
     Z = [2, 1]
+    objective = 1  # 1 for maximization, -1 for minimization
+    big_m = BigMMethod(A, b, Z, objective)
+    big_m.addingSlackVars()
+    big_m.addingArtificialVars()
+    maxValues, Z_final, status = big_m.method()
+
+    print("Max values of variables:", maxValues)
+    print("Final value of Z:", Z_final)
+    print("Status:", status)
+    print("\n")
+
+    # test 2
+    A = [[1, 1], [-1, -1]]
+    b = [1, -3]
+    Z = [2, 1]
+    objective = 1  # 1 for maximization, -1 for minimization
+    big_m = BigMMethod(A, b, Z, objective)
+    big_m.addingSlackVars()
+    big_m.addingArtificialVars()
+    maxValues, Z_final, status = big_m.method()
+
+    print("Max values of variables:", maxValues)
+    print("Final value of Z:", Z_final)
+    print("Status:", status)
+    print("\n")
+
+    # test 3
+    A = [[1, -1]]
+    b = [2]
+    Z = [1, 1]
+    objective = 1  # 1 for maximization, -1 for minimization
+    big_m = BigMMethod(A, b, Z, objective)
+    big_m.addingSlackVars()
+    big_m.addingArtificialVars()
+    maxValues, Z_final, status = big_m.method()
+
+    print("Max values of variables:", maxValues)
+    print("Final value of Z:", Z_final)
+    print("Status:", status)
+    print("\n")
+
+    # test 4
+    A = [[2, 1], [4, 2]]
+    b = [4, 8]
+    Z = [3, 2]
+    objective = 1  # 1 for maximization, -1 for minimization
+    big_m = BigMMethod(A, b, Z, objective)
+    big_m.addingSlackVars()
+    big_m.addingArtificialVars()
+    maxValues, Z_final, status = big_m.method()
+
+    print("Max values of variables:", maxValues)
+    print("Final value of Z:", Z_final)
+    print("Status:", status)
+    print("\n")
+
+    # test 5
+    A = [[1, 1], [2, 2]]
+    b = [5, 10]
+    Z = [1, 1]
+    objective = 1  # 1 for maximization, -1 for minimization
+    big_m = BigMMethod(A, b, Z, objective)
+    big_m.addingSlackVars()
+    big_m.addingArtificialVars()
+    maxValues, Z_final, status = big_m.method()
+
+    print("Max values of variables:", maxValues)
+    print("Final value of Z:", Z_final)
+    print("Status:", status)
+    print("\n")
+
+    # test 6
+    A = [[1, 1], [2, -1]]
+    b = [4, -5]
+    Z = [2, 3]
+    objective = 1  # 1 for maximization, -1 for minimization
+    big_m = BigMMethod(A, b, Z, objective)
+    big_m.addingSlackVars()
+    big_m.addingArtificialVars()
+    maxValues, Z_final, status = big_m.method()
+
+    print("Max values of variables:", maxValues)
+    print("Final value of Z:", Z_final)
+    print("Status:", status)
+    print("\n")
+
+    # test 7
+    A = [[1, 1], [2, 2]]
+    b = [4, 8]
+    Z = [3, 2]
     objective = 1  # 1 for maximization, -1 for minimization
     big_m = BigMMethod(A, b, Z, objective)
     big_m.addingSlackVars()
