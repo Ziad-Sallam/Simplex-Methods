@@ -19,6 +19,10 @@ class BigMMethod(Simplex):
                 self.A[i] *= -1
                 self.b[i] *= -1
 
+        for i, var in enumerate(self.artificial_vars):
+            self.Z -= self.M * self.A[i]
+            self.Z_final += self.M * self.b[i]
+
         maxValues, Z_final, status = super().method()
 
         for var in self.artificial_vars:
