@@ -88,7 +88,7 @@ class TwoPhaseMethod(object):
         self.BV = smplx.BV
 
         self.b = smplx.b
-        if smplx.Z_final <= 0:
+        if smplx.Z_final != 0:
             return False
         else:
             return True
@@ -148,17 +148,24 @@ class TwoPhaseMethod(object):
 
 
 A = [
-    [1,1],
-    [2,-5]
+    [1,-1],
+    [-1,1]
 ]
-b = [7, 10]
-Z = [1, 2]
-urv =[0,1]
-signs = ['=', '>=']
+b = [-1, -1]
+Z = [2, 3]
+urv =[0,0]
+signs = ['<=', '<=']
 
 p = TwoPhaseMethod(A,b,Z,urv,signs,1)
-p.method()
-print(p.steps)
+p.initialTableau()
+if p.phaseOne():
+    p.phaseTwo()
+    print(p.steps)
+else:
+    print(p.steps)
+    print("no solution")
+
+
 
 
 
