@@ -26,6 +26,7 @@ class BigM2:
         self.urv = urv
         self.steps = ''
         self.Z_final = 0
+        self.artificialVarCol =[]
 
 
     def initialTableau(self):
@@ -56,6 +57,9 @@ class BigM2:
 
         self.Z += [0]*self.m
         self.Z += [M*-1] *self.artificialVars
+        for x in range(self.m+ self.n,len(self.Z)):
+            self.artificialVarCol.append(x)
+        print(self.artificialVarCol)
 
         self.BV = []
         for x in range(self.m):
@@ -66,7 +70,7 @@ class BigM2:
     def removeVar(self,ind):
         self.Z.pop(ind)
         for i in range(len(self.A)):
-            A[i].pop(ind)
+            self.tableau[i].pop(ind)
 
     def solve(self):
         for i,s in enumerate(self.signs):
@@ -75,26 +79,24 @@ class BigM2:
                 for x in range(len(self.Z)):
                     self.Z[x] += self.tableau[i][x]*M
 
-        simplex = Simplex(self.A, self.b, self.Z, self.urv, self.objective*-1)
+
+        simplex = Simplex(self.tableau, self.b, self.Z, self.urv, self.objective)
         simplex.Z_final = self.Z_final*-1
+        simplex.BV = self.BV
+        simplex.artificialCount = self.artificialVars
+        simplex.numberOfVars = self.n
+        simplex.addURV()
         simplex.ansSetup()
+        print(simplex.varNames)
         x,y,z = simplex.method()
         print(simplex.steps)
-        print(x)
-        print(y)
-        print(z)
+        print(simplex.BV)
+        for i in simplex.BV:
+            for j in self.artificialVarCol:
+                if i == j:
+                    return False
 
-        # for i in range(self.artificialVars):
-        #     print(self.artificialVars)
-        #     bv = self.BV.copy()
-        #     a,b,c = self.iteration()
-        #     print(c)
-        #     print(self.BV)
-        #     print(bv)
-        #     print(self.Z)
-        #     print(tabulate(self.tableau, tablefmt='grid'))
-
-
+        return True
 
 
 A = [
@@ -103,11 +105,10 @@ A = [
 ]
 b = [7,10]
 Z = [1,2,1]
-urv =[0,0]
+urv =[0,1]
 signs = ['=','>=']
-x = BigM2(A, b, Z, urv, signs, -1)
+x = BigM2(A, b, Z, urv, signs, 1)
 x.initialTableau()
-
 x.solve()
 
 
