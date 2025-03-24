@@ -1,17 +1,22 @@
 import numpy as np
 from simplex import Simplex
+from tabulate import tabulate
+
 
 class PreemptiveGP():
-    def __init__(self,G, Gb, A, b, signs):
+    def __init__(self,G, Gb, A, b, urv, signs):
         self.G = np.array(G, dtype=float)
         self.Gb = np.array(Gb, dtype=float)
         self.A = np.array(A, dtype=float)
         self.b = np.array(b, dtype=float)
+        self.urv = np.array(urv, dtype=float)
         self.signs = np.array(signs, dtype=str)
         self.k = len(G)
         self.m = len(A)
         self.n = len(A[0])
-        self.BV =  [i + self.n+self.k for i in range(self.m+self.k)] 
+        self.BV =  [i + self.n+self.k for i in range(self.m+self.k)]
+        self.counturv = (self.urv == 1).sum() 
+        self.steps = ''
 
     def initialTableau(self):
         self.tableau = np.zeros((self.m+self.k, self.n + 2*self.k+self.m), dtype=float)
@@ -27,7 +32,7 @@ class PreemptiveGP():
             self.tableauRHS[i+self.k] = self.b[i]
 
     def setGoals (self):
-        self.G = np.zeros((self.k, self.n+2*self.k+self.m))
+        self.G = np.zeros((self.k, self.n+2*self.k+self.m+self.counturv))
         self.Gb = np.zeros(self.k)
         for i in range(self.k):
             if self.signs[i] == '>=':
@@ -37,9 +42,56 @@ class PreemptiveGP():
             else:
                 self.G[i][i+self.n] = -1
                 self.G[i][i+self.n+self.k] = -1
+
+    def addURV(self):
+        if self.counturv > 0:
+            for i in range(len(self.urv)):
+                if self.urv[i] == 1:
+                    coeff = np.array(self.tableau[:,i]) * -1
+                    self.A = np.hstack((self.tableau, coeff.reshape(-1,1)))
+                    self.BV.append(self.n + self.m + 2*self.k+ i)
+
+        self.urvCols =[]
+        for j in range(len(self.urv)):
+            if self.urv[j] == 1:
+                self.urvCols.append(j) 
+
+    def ansSetup(self):
+        self.varNames = [f'x{i}' for i in range(0, self.n)]
+        self.varNames.insert(0, '')
+        for i in range(self.k):
+            self.varNames.append(f'S{i}+')
+        for i in range(self.k):
+            self.varNames.append(f'S{i}-')
+        for i in range(self.m):
+            self.varNames.append(f'S{i+self.k}')    
+        for i in range(self.counturv):
+            self.varNames.append(f'X{self.urvCols[i]}\'')    
+        self.varNames.append('RHS')
+
+
+    def addToSteps(self):
+        self.stp = []
+        self.stp.append(self.varNames)
+        
+        for j in range(self.k):
+            z = [f"Z{j}"]
+            for i in range(len(self.G[0])):
+                z.append(self.G[j,i])
+            z.append(self.Gb[j])
+            self.stp.append(z)
+
+        for i in range(len(self.tableau)):
+            x = self.tableau[i]
+            x = x.tolist()
+            x.insert(0,self.varNames[self.BV[i]+1])
+            x.append(self.tableauRHS[i])
+            self.stp.append(x)
+        self.steps += tabulate(self.stp, tablefmt='grid') +'\n\n'                       
                         
     def method(self):
         tol = 1e-9
+        self.addToSteps()
         for i in range(self.k):
             self.G[i] += self.tableau[i]
             self.Gb[i] += self.tableauRHS[i]
@@ -112,11 +164,14 @@ class PreemptiveGP():
                             cols.append(-1)    
                     sortedcols = sorted(cols , key = lambda x: self.G[i,x], reverse=True)
                     sortedcols = [x for x in sortedcols if x != -1]
-
+            self.addToSteps()
         maxValues = np.zeros(self.n)
         for i in range(self.m+self.k):
             if self.BV[i] < self.n:
                 maxValues[self.BV[i]] = self.tableauRHS[i]
+            elif self.BV[i] >= self.n + self.m + 2*self.k:
+                maxValues[self.BV[i] - self.m - 2*self.k] = self.b[i]
+    
 
         return maxValues  
                     
@@ -125,20 +180,24 @@ class PreemptiveGP():
 
 
 def main():
-    Gh = np.array([[200, 0], [100, 400], [0, 250 ]])
+    G = np.array([[200, 0], [100, 400], [0, 250 ]]) #مسألة الشيت
     Gb = [1000, 1200, 800]
-    Ah = [[1500, 3000]]
+    A = [[1500, 3000]]
     b = [15000]
     signs = ['>=', '>=', '>=']
-    preemptive = PreemptiveGP(Gh, Gb, Ah, b, signs)
+    urv = [0,0]
+    preemptive = PreemptiveGP(G, Gb, A, b,urv, signs)
     preemptive.initialTableau()
     preemptive.setGoals()
+    preemptive.addURV()
+    preemptive.ansSetup()
     maxvalues = preemptive.method()
-    np.set_printoptions(precision=6, suppress=True)
+   # np.set_printoptions(precision=6, suppress=True)
     print(preemptive.G)
     print(preemptive.Gb)
     print(preemptive.tableau)
     print(preemptive.tableauRHS)
     print(maxvalues)
+    print(preemptive.steps)
 main()    
        

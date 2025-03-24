@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 
 class Simplex():
-    def __init__(self, A, b, Z , objective):
+    def __init__(self, A, b, Z , urv, objective):
         """
         :param A: Coefficient of constraints
         :param b: Right hand side
@@ -16,14 +16,37 @@ class Simplex():
         self.A = np.array(A, dtype=float)  # coefficient matrix
         self.b = np.array(b, dtype=float)  # RHS
         self.Z = np.array(Z, dtype=float) * -1 # objective vector
+        self.urv = np.array(urv, dtype=float) # unrestricted variables
+        self.counturv = (self.urv == 1).sum()
+        self.artificialCount = 0
         self.Z_final = 0
         self.BV = [i + self.n for i in range(self.m)]  # Basic variables
         self.steps = ''
+        self.stp = []
+        self.varNames = []
+        self.urvCols = []
+        
 
     def addingSlackVars(self):
         identity = np.eye(self.m)
         self.A = np.hstack((self.A, identity))
         self.Z = np.append(self.Z, np.zeros(self.m))
+
+    def addURV(self):
+        if self.counturv > 0:
+            for i in range(len(self.urv)):
+                if self.urv[i] == 1:
+                    coeff = np.array(self.A[:,i]) * -1
+                    self.A = np.hstack((self.A, coeff.reshape(-1,1)))
+                    self.Z = np.append(self.Z, self.Z[i] * -1)
+                    self.BV.append(self.n + self.m + i)
+
+        self.urvCols =[]
+        for j in range(len(self.urv)):
+            if self.urv[j] == 1:
+                self.urvCols.append(j)
+            
+
     
     def method(self):
         optimal = False
@@ -69,10 +92,13 @@ class Simplex():
 
             self.addToSteps()
 
-        maxValues = np.zeros(self.n)
+        maxValues = np.zeros(self.n + self.counturv)
         for i in range(self.m):
             if self.BV[i] < self.n:
                 maxValues[self.BV[i]] = self.b[i]
+            elif self.BV[i] >= self.n + self.m:
+                maxValues[self.BV[i] - self.m ] = self.b[i]
+
 
         return maxValues, self.Z_final, "optimum solution"
 
@@ -82,6 +108,10 @@ class Simplex():
         self.varNames.insert(0, '')
         for i in range(self.m):
             self.varNames.append(f'S{i}')
+        for i in range(self.counturv):
+            self.varNames.append(f'X{self.urvCols[i]}\'')
+        for i in range(self.artificialCount):
+            self.varNames.append(f'a{i}')    
         self.varNames.append('RHS')
 
 
@@ -89,6 +119,7 @@ class Simplex():
         self.stp = []
         self.stp.append(self.varNames)
         z = ['Z']
+
         for i in range(len(self.A[0])):
             z.append(self.Z[i])
         z.append(self.Z_final)
@@ -104,20 +135,29 @@ class Simplex():
 
 
 def main():
-    A = [[1, 4], [1, 2]]
-    b = [8, 4]
-    Z = [3, 9]
-    objective = 1 #min
-    simplex = Simplex(A, b, Z, objective)
+    A = [[5, -1], [1, 0]]
+    b = [30, 5]
+    Z = [30, -4]
+    urv = [0, 1]
+    objective = 1 
+    simplex = Simplex(A, b, Z,urv, objective)
     simplex.addingSlackVars()
+    simplex.addURV()
     simplex.ansSetup()
 
     maxValues, Z_final, status = simplex.method()
 
-    print("Max values of variables:", maxValues)
+    state = "Max" if objective == 1 else "Min"
+    print(f"{state} values of variables:")
+    for i in range(len(maxValues)):
+        if i < simplex.n:
+            print(f"x{i}:", maxValues[i])
+        else:
+            print(f"X{simplex.urvCols[i - simplex.n]}\':", maxValues[i])  
+
     print("Final value of Z:", Z_final)
     print("Status:", status)
     print('steps:')
     print(simplex.steps)
 
-#main()
+main()
