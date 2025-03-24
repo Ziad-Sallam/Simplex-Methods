@@ -89,11 +89,11 @@ class BigM2:
         simplex.ansSetup()
         print(simplex.varNames)
         x,y,z = simplex.method()
-        print(simplex.steps)
-        print(simplex.BV)
+        self.steps += simplex.steps
         for i in simplex.BV:
             for j in self.artificialVarCol:
                 if i == j:
+                    self.steps += 'No solution\n'
                     return False
 
         return True
