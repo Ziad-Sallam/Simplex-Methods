@@ -13,7 +13,7 @@ class PreemptiveGP():
         self.signs = np.array(signs, dtype=str)
         self.k = len(G)
         self.m = len(A)
-        self.n = len(A[0]) if len(A) > 0 else len(G[0])
+        self.n = len(G[0])
         self.BV =  [i + self.n+self.k for i in range(self.m+self.k)]
         self.counturv = (self.urv == 1).sum() 
         self.steps = ''
@@ -108,6 +108,7 @@ class PreemptiveGP():
             sortedcols = sorted(cols , key = lambda x: self.G[i,x], reverse=True)
             sortedcols = [x for x in sortedcols if x != -1] 
             while len(sortedcols) > 0 :
+                self.addToSteps()
                 pivotCol = sortedcols[0]
                 valid_pivot = True
 
@@ -166,7 +167,7 @@ class PreemptiveGP():
                             cols.append(-1)    
                     sortedcols = sorted(cols , key = lambda x: self.G[i,x], reverse=True)
                     sortedcols = [x for x in sortedcols if x != -1]
-            self.addToSteps()
+        self.addToSteps()
         maxValues = np.zeros(self.n)
         for i in range(self.m+self.k):
             if self.BV[i] < self.n:
@@ -186,8 +187,8 @@ class PreemptiveGP():
 
 
 def main():
-    G = np.array([[1, 1], [1, 1]]) 
-    Gb = [10,5]
+    G = np.array([[1, 0], [0, 1]]) 
+    Gb = [100,0]
     A = []
     b = []
     signs = ['>=', '<=']
