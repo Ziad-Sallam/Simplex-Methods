@@ -48,7 +48,7 @@ class PreemptiveGP():
             for i in range(len(self.urv)):
                 if self.urv[i] == 1:
                     coeff = np.array(self.tableau[:,i]) * -1
-                    self.A = np.hstack((self.tableau, coeff.reshape(-1,1)))
+                    self.tableau = np.hstack((self.tableau, coeff.reshape(-1,1)))
                     self.BV.append(self.n + self.m + 2*self.k+ i)
 
         self.urvCols =[]
@@ -185,12 +185,16 @@ def main():
     A = [[1500, 3000]]
     b = [15000]
     signs = ['>=', '>=', '>=']
-    urv = [0,0]
+    urv = [0,1]
     preemptive = PreemptiveGP(G, Gb, A, b,urv, signs)
+    
     preemptive.initialTableau()
-    preemptive.setGoals()
     preemptive.addURV()
+    preemptive.setGoals()
+    
     preemptive.ansSetup()
+    print(preemptive.G[0])
+    print(preemptive.tableau[0])
     maxvalues = preemptive.method()
    # np.set_printoptions(precision=6, suppress=True)
     print(preemptive.G)
