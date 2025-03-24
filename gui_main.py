@@ -1,6 +1,7 @@
 import sys
 import subprocess
 import simplex
+from TwoPhaseMethod import TwoPhaseMethod
 from gui import *
 from simplex import Simplex
 
@@ -92,13 +93,19 @@ def solve():
         for j in range(ui.numberOfVariables.value()):
             ob.append(ui.objectives[i][j].value())
         Z.append(ob)
-
+    signs = []
     for i in range(0,ui.numberOfConstraints.value()):
         x =[]
         for j in range(0,ui.numberOfVariables.value()):
             x.append(ui.constraints[i][j].value())
         A.append(x)
         b.append(ui.constrainValues[i].value())
+        if ui.constraintSigns[i].currentText() == '≤':
+            signs.append('<=')
+        elif ui.constraintSigns[i].currentText() == '≥':
+            signs.append('>=')
+        else:
+            signs.append('=')
 
     method = ui.Method.currentText()
     if method == 'Simple Simplex':
@@ -112,19 +119,32 @@ def solve():
         ans += f"\nMax values of variables: {maxValues}\n"
         ans += f"Z final: {Z_final}\n"
         ans += f"status: {status}\n"
-        with open("ans.txt","w") as f:
-            f.write(ans)
+
+    elif method == '2 Phase Method':
+        print("here")
         print(A)
         print(b)
-        print(Z)
+        print(Z[0])
         print(urv)
+        print(signs)
+        print(objective)
+        p = TwoPhaseMethod(A, b, Z[0], urv, signs, objective)
+        print('hello')
+        p.initialTableau()
+        p.phaseOne()
+        p.phaseTwo()
+        ans += 'steps:\n'
+        ans += p.steps
 
-        try:
-            subprocess.run(["notepad", "ans.txt"], shell=True, check=True)
-        except FileNotFoundError:
-            print("Notepad not found. Please open 'ans.txt' manually.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
+
+    with open("ans.txt", "w") as f:
+        f.write(ans)
+    try:
+        subprocess.run(["notepad", "ans.txt"], shell=True, check=True)
+    except FileNotFoundError:
+        print("Notepad not found. Please open 'ans.txt' manually.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 

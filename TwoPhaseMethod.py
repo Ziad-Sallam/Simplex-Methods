@@ -1,10 +1,11 @@
 import numpy as np
+from tabulate import tabulate
 
 from simplex import Simplex
 
 
 class TwoPhaseMethod(object):
-    def __init__(self,A,b,Z,signs,objective):
+    def __init__(self,A,b,Z,urv,signs,objective):
         """
         :param A: coefficient of constraints
         :param b: right hand side of constraints
@@ -22,6 +23,8 @@ class TwoPhaseMethod(object):
         self.m = len(A)
         self.n = len(A[0])
         self.tableau = A
+        self.urv = urv
+        self.steps = ''
 
 
     def initialTableau(self):
@@ -52,8 +55,9 @@ class TwoPhaseMethod(object):
             if z:
                 c+=1
 
-    def phaseOne(self):
 
+
+    def phaseOne(self):
         z_p1 = [0]*(self.n + self.m)
         for i in range(self.artificialVars):
             z_p1.append(1)
@@ -62,74 +66,99 @@ class TwoPhaseMethod(object):
                 for i in range(len(z_p1)):
                     z_p1[i] -= self.tableau[ind][i]
 
-
         BV= []
         for x in range(self.m):
             for y in range(self.n, len(self.tableau[0])):
                 if self.tableau[x][y] == 1:
                     BV.append(y)
 
-        print("before phase one: ")
-
-        for x in self.tableau:
-            print(x)
-        print(z_p1)
-        print(b)
-        print(BV)
-        smplx = Simplex(self.tableau, b, z_p1, -1)
+        smplx = Simplex(self.tableau, b, z_p1, self.urv, -1)
+        smplx.artificialCount = self.artificialVars
+        smplx.numberOfVars = self.n
+        smplx.addURV()
+        smplx.ansSetup()
+        self.varNames = smplx.varNames
         smplx.BV = BV
         maxValues, Z_final, state = smplx.method()
+        self.steps += smplx.steps
 
         self.tableau = smplx.A
         self.BV = smplx.BV
-        print("after phase one: ")
+
         self.b = smplx.b
 
-        print(maxValues)
-        print(smplx.Z)
-        for x in self.tableau:
-            print(x)
+
+
+        # print(smplx.steps)
+        # print(maxValues)
+        # print(smplx.Z)
+        # for x in self.tableau:
+        #     print(x)
 
     def phaseTwo(self):
-        print("---------------------------------------------------------")
         z_p2 = self.Z
         for y in range(self.artificialVars):
             self.tableau = self.tableau[:, :-1]
         for i in range(self.m):
             z_p2.append(0)
+        for i in range(len(self.urv)):
+            if self.urv[i] == 1:
+                z_p2.append(z_p2[i]*-1)
 
-        # print(z_p2)
+
         # print(self.tableau)
-        smplx = Simplex(self.tableau,self.b,z_p2,self.objective)
-        smplx.BV = self.BV
-        maxValues, Z_final, state = smplx.method()
+        remove = []
+        for i  in self.varNames:
+            if len(i) > 0:
+                if i[0] == 'a':
+                    remove.append(i)
 
-        print(self.tableau)
-        print(smplx.b)
-        print(Z_final)
-        print(state)
-        print(maxValues)
-        print(smplx.Z)
+        for i in remove:
+            self.varNames.remove(i)
+        smplx = Simplex(self.tableau,self.b,z_p2,[0]*self.n,self.objective)
+        smplx.BV = self.BV
+        smplx.varNames = self.varNames
+
+        maxValues, Z_final, status = smplx.method()
+
+        self.steps += smplx.steps
+
+        state = "Max" if self.objective == 1 else "Min"
+        self.steps += f"\n{state} values of variables: {maxValues}\n"
+        for i in range(len(maxValues)):
+            if maxValues[i] !=0:
+                self.steps += f"{self.varNames[i+1]}: {maxValues[i]}\n"
+
+
+        self.steps += f"Z final: {Z_final}\n"
+        self.steps += f"status: {status}\n"
+        # print(self.tableau)
+        # print(smplx.b)
+        # print(Z_final)
+        # print(state)
+        # print(maxValues)
+        # print(smplx.Z)
+    def method(self):
+        self.initialTableau()
+        print("heeeeee")
+        self.phaseOne()
+        print("heeeeee")
+        self.phaseTwo()
+        print("heeeeee")
+
 
 A = [
-    [1,1,1],
-    [2,-5,1]
+    [1,1],
+    [2,-5]
 ]
 b = [7, 10]
-Z = [1, 2, 1]
+Z = [1, 2]
+urv =[0,1]
 signs = ['=', '>=']
 
-p = TwoPhaseMethod(A,b,Z,signs,1)
-p.initialTableau()
-p.phaseOne()
-p.tableau = np.array([
-    [0,1,1/7,0,1/7,2/7,-1/7],
-    [1,0,6/7,0,-1/7,5/7,1/7]
-])
-p.b = [4/7,45/7]
-p.BV = [1,0]
-print()
-p.phaseTwo()
+p = TwoPhaseMethod(A,b,Z,urv,signs,1)
+p.method()
+print(p.steps)
 
 
 

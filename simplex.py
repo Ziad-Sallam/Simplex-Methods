@@ -25,6 +25,7 @@ class Simplex():
         self.stp = []
         self.varNames = []
         self.urvCols = []
+        self.numberOfVars = self.n
         
 
     def addingSlackVars(self):
@@ -104,14 +105,17 @@ class Simplex():
 
 
     def ansSetup(self):
-        self.varNames = [f'x{i}' for i in range(0, self.n)]
+        self.varNames = [f'x{i}' for i in range(0, self.numberOfVars)]
         self.varNames.insert(0, '')
         for i in range(self.m):
             self.varNames.append(f'S{i}')
+
+        for i in range(self.artificialCount):
+            self.varNames.append(f'a{i}')
+
         for i in range(self.counturv):
             self.varNames.append(f'X{self.urvCols[i]}\'')
-        for i in range(self.artificialCount):
-            self.varNames.append(f'a{i}')    
+
         self.varNames.append('RHS')
 
 
@@ -160,4 +164,4 @@ def main():
     print('steps:')
     print(simplex.steps)
 
-main()
+#main()
