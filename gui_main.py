@@ -76,10 +76,16 @@ def solve():
     A = []
     b =[]
     Z =[]
+    urv =[]
     ans =''
     objective = -1
     if ui.maximizeRadio.isChecked():
         objective = 1
+    for i in range(ui.numberOfVariables.value()):
+        if ui.types[i].currentText() == 'URV':
+            urv.append(1)
+        else:
+            urv.append(0)
 
     for i in range(ui.numberOfObjectives.value()):
         ob =[]
@@ -90,14 +96,15 @@ def solve():
     for i in range(0,ui.numberOfConstraints.value()):
         x =[]
         for j in range(0,ui.numberOfVariables.value()):
-            x.append(ui.constraints[j][i].value())
+            x.append(ui.constraints[i][j].value())
         A.append(x)
         b.append(ui.constrainValues[i].value())
 
     method = ui.Method.currentText()
     if method == 'Simple Simplex':
-        smplx = Simplex(A,b,Z,objective)
+        smplx = Simplex(A,b,Z,urv,objective)
         smplx.addingSlackVars()
+        smplx.addURV()
         smplx.ansSetup()
         maxValues, Z_final, status = smplx.method()
         ans += 'steps:\n'
@@ -107,8 +114,10 @@ def solve():
         ans += f"status: {status}\n"
         with open("ans.txt","w") as f:
             f.write(ans)
-        print(ans)
-
+        print(A)
+        print(b)
+        print(Z)
+        print(urv)
 
         try:
             subprocess.run(["notepad", "ans.txt"], shell=True, check=True)

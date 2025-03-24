@@ -119,7 +119,8 @@ class Ui_MainWindow(object):
             objectiveLabels =[]
             for i in range(0,10):
                 x = QtWidgets.QSpinBox(parent=objective_widget)
-
+                x.setMinimum(-100000)
+                x.setMaximum(100000)
                 x.setObjectName("objective" + str(i))
                 x.setGeometry(QtCore.QRect( 40 + 100*i, 20+40*j, 0, 20))
                 x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
@@ -166,6 +167,8 @@ class Ui_MainWindow(object):
             labels =[]
             for j in range(0,10):
                 x = QtWidgets.QSpinBox(parent=constraints_widget)
+                x.setMinimum(-100000)
+                x.setMaximum(100000)
                 x.setObjectName("constraint" + str(j))
                 x.setGeometry(QtCore.QRect(40 + 100 * j,  20+40*i, 0, 20))
                 x.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
@@ -193,6 +196,8 @@ class Ui_MainWindow(object):
             self.constraintSigns.append(q)
 
             ans = QtWidgets.QSpinBox(parent=constraints_widget)
+            x.setMinimum(-100000)
+            x.setMaximum(100000)
             ans.setObjectName("ans sign" + str(i))
             ans.setGeometry(QtCore.QRect(1100, 20+40*i, 40, 20))
             ans.setFont(font)
