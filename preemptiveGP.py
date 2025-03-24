@@ -13,7 +13,7 @@ class PreemptiveGP():
         self.signs = np.array(signs, dtype=str)
         self.k = len(G)
         self.m = len(A)
-        self.n = len(A[0])
+        self.n = len(A[0]) if len(A) > 0 else len(G[0])
         self.BV =  [i + self.n+self.k for i in range(self.m+self.k)]
         self.counturv = (self.urv == 1).sum() 
         self.steps = ''
@@ -48,7 +48,7 @@ class PreemptiveGP():
             for i in range(len(self.urv)):
                 if self.urv[i] == 1:
                     coeff = np.array(self.tableau[:,i]) * -1
-                    self.A = np.hstack((self.tableau, coeff.reshape(-1,1)))
+                    self.tableau = np.hstack((self.tableau, coeff.reshape(-1,1)))
                     self.BV.append(self.n + self.m + 2*self.k+ i)
 
         self.urvCols =[]
@@ -127,6 +127,8 @@ class PreemptiveGP():
                         ratios[j] = self.tableauRHS[j] / self.tableau[j, pivotCol]
                     else:
                         ratios[j] = np.inf
+                if np.all(ratios == np.inf):
+                    return None, "unbounded solution"        
 
                 pivotRow = np.argmin(ratios)
                 factor = self.tableau[pivotRow, pivotCol]
@@ -171,32 +173,41 @@ class PreemptiveGP():
                 maxValues[self.BV[i]] = self.tableauRHS[i]
             elif self.BV[i] >= self.n + self.m + 2*self.k:
                 maxValues[self.BV[i] - self.m - 2*self.k] = self.b[i]
-    
-
-        return maxValues  
+        status = ""
+        for i in range(self.k):
+            if self.Gb[i] > tol:
+                status += f"Goal {i+1} not achieved\n"
+            else:
+                status += f"Goal {i+1} achieved\n"   
+        return maxValues, status 
                     
 
 
 
 
 def main():
-    G = np.array([[200, 0], [100, 400], [0, 250 ]]) #مسألة الشيت
-    Gb = [1000, 1200, 800]
-    A = [[1500, 3000]]
-    b = [15000]
-    signs = ['>=', '>=', '>=']
+    G = np.array([[1, 1], [1, 1]]) 
+    Gb = [10,5]
+    A = []
+    b = []
+    signs = ['>=', '<=']
     urv = [0,0]
     preemptive = PreemptiveGP(G, Gb, A, b,urv, signs)
+    
     preemptive.initialTableau()
-    preemptive.setGoals()
     preemptive.addURV()
+    preemptive.setGoals()
+    
     preemptive.ansSetup()
-    maxvalues = preemptive.method()
+    print(preemptive.G[0])
+    print(preemptive.tableau[0])
+    maxvalues,status = preemptive.method()
    # np.set_printoptions(precision=6, suppress=True)
-    print(preemptive.G)
-    print(preemptive.Gb)
-    print(preemptive.tableau)
-    print(preemptive.tableauRHS)
+    # print(preemptive.G)
+    # print(preemptive.Gb)
+    # print(preemptive.tableau)
+    # print(preemptive.tableauRHS)
+    print(status)
     print(maxvalues)
     print(preemptive.steps)
 main()    
