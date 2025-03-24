@@ -84,7 +84,6 @@ class Simplex():
             factor = self.Z[pivotCol]
             self.Z -= factor * self.A[pivotRow]
             self.Z_final -= factor * self.b[pivotRow]
-
             self.BV[pivotRow] = pivotCol
             if self.objective == 1:
                 optimal = np.all(self.Z >= 0)

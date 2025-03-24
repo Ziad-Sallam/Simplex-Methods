@@ -25,12 +25,12 @@ class TwoPhaseMethod(object):
         self.tableau = A
         self.urv = urv
         self.steps = ''
+        self.Z_final = 0
 
 
     def initialTableau(self):
         i = np.eye(self.m)
         self.artificialVars = 0
-
         for x in range(self.m):
             for y in range(self.m):
                 if i[x][y] != 0:
@@ -56,7 +56,6 @@ class TwoPhaseMethod(object):
                 c+=1
 
 
-
     def phaseOne(self):
         z_p1 = [0]*(self.n + self.m)
         for i in range(self.artificialVars):
@@ -65,6 +64,8 @@ class TwoPhaseMethod(object):
             if s=='>=' or s=='=':
                 for i in range(len(z_p1)):
                     z_p1[i] -= self.tableau[ind][i]
+        for i in b:
+            self.Z_final +=i
 
         BV= []
         for x in range(self.m):
@@ -73,6 +74,7 @@ class TwoPhaseMethod(object):
                     BV.append(y)
 
         smplx = Simplex(self.tableau, b, z_p1, self.urv, -1)
+        smplx.Z_final = self.Z_final
         smplx.artificialCount = self.artificialVars
         smplx.numberOfVars = self.n
         smplx.addURV()
@@ -86,16 +88,14 @@ class TwoPhaseMethod(object):
         self.BV = smplx.BV
 
         self.b = smplx.b
+        if smplx.Z_final <= 0:
+            return False
+        else:
+            return True
 
-
-
-        # print(smplx.steps)
-        # print(maxValues)
-        # print(smplx.Z)
-        # for x in self.tableau:
-        #     print(x)
 
     def phaseTwo(self):
+        self.steps += 'phase 2:\n'
         z_p2 = self.Z
         for y in range(self.artificialVars):
             self.tableau = self.tableau[:, :-1]

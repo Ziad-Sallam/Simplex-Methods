@@ -131,10 +131,13 @@ def solve():
         p = TwoPhaseMethod(A, b, Z[0], urv, signs, objective)
         print('hello')
         p.initialTableau()
-        p.phaseOne()
-        p.phaseTwo()
-        ans += 'steps:\n'
-        ans += p.steps
+
+        if p.phaseOne():
+            p.phaseTwo()
+            ans += 'steps:\n'
+            ans += p.steps
+        else:
+            ans += 'No feasible region. \n'
 
 
     with open("ans.txt", "w") as f:
