@@ -4,6 +4,7 @@ import simplex
 from TwoPhaseMethod import TwoPhaseMethod
 from gui import *
 from simplex import Simplex
+from BigM2 import BigM2
 
 
 def numberOfVariablesChange():
@@ -121,15 +122,8 @@ def solve():
         ans += f"status: {status}\n"
 
     elif method == '2 Phase Method':
-        print("here")
-        print(A)
-        print(b)
-        print(Z[0])
-        print(urv)
-        print(signs)
-        print(objective)
         p = TwoPhaseMethod(A, b, Z[0], urv, signs, objective)
-        print('hello')
+
         p.initialTableau()
 
         if p.phaseOne():
@@ -139,6 +133,18 @@ def solve():
         else:
             ans += 'No feasible region. \n'
 
+    elif method == 'Big M Method':
+        print(A)
+        print(b)
+        print(Z)
+        print(signs)
+        print(urv)
+        print(objective)
+        p = BigM2(A, b, Z[0], urv, signs, objective)
+        p.initialTableau()
+        p.solve()
+        ans += 'steps:\n'
+        ans += p.steps
 
     with open("ans.txt", "w") as f:
         f.write(ans)
