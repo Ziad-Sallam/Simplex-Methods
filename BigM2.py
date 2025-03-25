@@ -59,7 +59,7 @@ class BigM2:
         self.Z += [M*-1] *self.artificialVars
         for x in range(self.m+ self.n,len(self.Z)):
             self.artificialVarCol.append(x)
-        print(self.artificialVarCol)
+        #print(self.artificialVarCol)
 
         self.BV = []
         for x in range(self.m):
@@ -87,10 +87,11 @@ class BigM2:
         simplex.numberOfVars = self.n
         simplex.addURV()
         simplex.ansSetup()
-        print(simplex.varNames)
+        #print(simplex.varNames)
         try:
             x,y,z = simplex.method()
         except ValueError as e:
+            self.steps += simplex.steps
             self.steps += f'{e}\n'
             return False    
         self.steps += simplex.steps

@@ -121,12 +121,17 @@ def solve():
         smplx.addingSlackVars()
         smplx.addURV()
         smplx.ansSetup()
-        maxValues, Z_final, status = smplx.method()
-        ans += 'steps:\n'
-        ans += smplx.steps
-        ans += f"\nMax values of variables: {maxValues}\n"
-        ans += f"Z final: {Z_final}\n"
-        ans += f"status: {status}\n"
+        try:
+            maxValues, Z_final, status = smplx.method()
+        except ValueError as e:
+            ans += smplx.steps
+            ans += str(e)
+        else:    
+            ans += 'steps:\n'
+            ans += smplx.steps
+            ans += f"\nMax values of variables: {maxValues}\n"
+            ans += f"Z final: {Z_final}\n"
+            ans += f"status: {status}\n"
 
     elif method == '2 Phase Method':
         p = TwoPhaseMethod(A, b, Z[0], urv, signs, objective)

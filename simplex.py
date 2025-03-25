@@ -138,29 +138,32 @@ class Simplex():
 
 
 def main():
-    A = [[5, -1], [1, 0]]
-    b = [30, 5]
-    Z = [30, -4]
+    A = [[1,-1]]
+    b = [2]
+    Z = [2,1]
+    urv =[0,1]
     urv = [0, 1]
     objective = 1 
     simplex = Simplex(A, b, Z,urv, objective)
     simplex.addingSlackVars()
     simplex.addURV()
     simplex.ansSetup()
+    try:
+        maxValues, Z_final, status = simplex.method()
+    except ValueError as e:
+        print(e)
+    else:
+        state = "Max" if objective == 1 else "Min"
+        print(f"{state} values of variables:")
+        for i in range(len(maxValues)):
+            if i < simplex.n:
+                print(f"x{i}:", maxValues[i])
+            else:
+                print(f"X{simplex.urvCols[i - simplex.n]}\':", maxValues[i])  
 
-    maxValues, Z_final, status = simplex.method()
-
-    state = "Max" if objective == 1 else "Min"
-    print(f"{state} values of variables:")
-    for i in range(len(maxValues)):
-        if i < simplex.n:
-            print(f"x{i}:", maxValues[i])
-        else:
-            print(f"X{simplex.urvCols[i - simplex.n]}\':", maxValues[i])  
-
-    print("Final value of Z:", Z_final)
-    print("Status:", status)
-    print('steps:')
-    print(simplex.steps)
+        print("Final value of Z:", Z_final)
+        print("Status:", status)
+        print('steps:')
+        print(simplex.steps)
 
 #main()
