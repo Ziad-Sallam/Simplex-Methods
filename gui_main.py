@@ -185,9 +185,7 @@ def solve():
 
         preemptive.ansSetup()
         print("hello")
-        ans +=f"{preemptive.G[0]}\n"
-
-        ans += f"{preemptive.tableau[0]}\n"
+        
         maxvalues, status = preemptive.method()
 
         ans += f"{status}\n"

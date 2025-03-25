@@ -160,13 +160,14 @@ class TwoPhaseMethod(object):
 
 
 A = [
-    [1,-1]
     
+    [2,-5,1],
+    [1,1,1]
 ]
-b = [2]
-Z = [2,1]
-urv =[0,1]
-signs = ['<=']
+b = [10,7]
+Z = [1,2,1]
+urv =[0,0]
+signs = ['>=','=']
 
 p = TwoPhaseMethod(A,b,Z,urv,signs,1)
 p.initialTableau()
