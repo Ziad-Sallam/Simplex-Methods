@@ -59,7 +59,7 @@ class Simplex():
                 pivotCol = np.argmax(self.Z)
 
             if np.all(self.A[:, pivotCol] <= 0):
-                return None, None, "Unbounded solution"
+                raise ValueError("Unbounded solution")
 
             ratios = np.zeros(self.m)
             for i in range(self.m):

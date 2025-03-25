@@ -57,9 +57,11 @@ class TwoPhaseMethod(object):
 
 
     def phaseOne(self):
+        
         z_p1 = [0]*(self.n + self.m)
         for i in range(self.artificialVars):
             z_p1.append(1)
+            
         for ind,s in enumerate(self.signs):
             if s=='>=' or s=='=':
                 for i in range(len(z_p1)):
@@ -72,7 +74,7 @@ class TwoPhaseMethod(object):
             for y in range(self.n, len(self.tableau[0])):
                 if self.tableau[x][y] == 1:
                     BV.append(y)
-
+        
         smplx = Simplex(self.tableau, b, z_p1, self.urv, -1)
         smplx.Z_final = self.Z_final
         smplx.artificialCount = self.artificialVars
@@ -81,7 +83,12 @@ class TwoPhaseMethod(object):
         smplx.ansSetup()
         self.varNames = smplx.varNames
         smplx.BV = BV
-        maxValues, Z_final, state = smplx.method()
+        
+        try:
+            maxValues, Z_final, state = smplx.method()
+        except ValueError as e:
+            self.steps += str(e)
+            return False        
         self.steps += smplx.steps
 
         self.tableau = smplx.A
@@ -119,7 +126,11 @@ class TwoPhaseMethod(object):
         smplx.BV = self.BV
         smplx.varNames = self.varNames
 
-        maxValues, Z_final, status = smplx.method()
+        try:
+            maxValues, Z_final, state = smplx.method()
+        except ValueError as e:
+            self.steps += str(e)
+            return False
 
         self.steps += smplx.steps
 
@@ -131,7 +142,7 @@ class TwoPhaseMethod(object):
 
 
         self.steps += f"Z final: {Z_final}\n"
-        self.steps += f"status: {status}\n"
+        self.steps += f"status: optimum solution\n"
         # print(self.tableau)
         # print(smplx.b)
         # print(Z_final)
@@ -147,14 +158,15 @@ class TwoPhaseMethod(object):
         print("heeeeee")
 
 
+
 A = [
-    [1,-1],
-    [-1,1]
+    [1,-1]
+    
 ]
-b = [-1, -1]
-Z = [2, 3]
-urv =[0,0]
-signs = ['<=', '<=']
+b = [2]
+Z = [2,1]
+urv =[0,1]
+signs = ['<=']
 
 p = TwoPhaseMethod(A,b,Z,urv,signs,1)
 p.initialTableau()
@@ -163,7 +175,7 @@ if p.phaseOne():
     print(p.steps)
 else:
     print(p.steps)
-    print("no solution")
+    
 
 
 

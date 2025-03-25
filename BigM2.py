@@ -88,7 +88,11 @@ class BigM2:
         simplex.addURV()
         simplex.ansSetup()
         print(simplex.varNames)
-        x,y,z = simplex.method()
+        try:
+            x,y,z = simplex.method()
+        except ValueError as e:
+            self.steps += f'{e}\n'
+            return False    
         self.steps += simplex.steps
         for i in simplex.BV:
             for j in self.artificialVarCol:
@@ -100,15 +104,16 @@ class BigM2:
 
 
 A = [
-    [1,1,1],
-    [2,-5,1]
+    [1,-1]
+    
 ]
-b = [7,10]
-Z = [1,2,1]
+b = [2]
+Z = [2,1]
 urv =[0,1]
-signs = ['=','>=']
+signs = ['<=']
 x = BigM2(A, b, Z, urv, signs, 1)
 x.initialTableau()
 x.solve()
+print(x.steps)
 
 
