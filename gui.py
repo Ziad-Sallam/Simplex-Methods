@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
             objective =[]
             objectiveLabels =[]
             for i in range(0,10):
-                x = QtWidgets.QSpinBox(parent=objective_widget)
+                x = QtWidgets.QDoubleSpinBox(parent=objective_widget)
                 x.setMinimum(-100000)
                 x.setMaximum(100000)
                 x.setObjectName("objective" + str(i))
@@ -141,7 +141,7 @@ class Ui_MainWindow(object):
             q.setFont(font)
             self.goalSigns.append(q)
 
-            ans = QtWidgets.QSpinBox(parent=objective_widget)
+            ans = QtWidgets.QDoubleSpinBox(parent=objective_widget)
             ans.setObjectName("ans sign" + str(j))
             ans.setMinimum(-100000)
             ans.setMaximum(100000)
@@ -168,7 +168,7 @@ class Ui_MainWindow(object):
             const = []
             labels =[]
             for j in range(0,10):
-                x = QtWidgets.QSpinBox(parent=constraints_widget)
+                x = QtWidgets.QDoubleSpinBox(parent=constraints_widget)
                 x.setMinimum(-100000)
                 x.setMaximum(100000)
                 x.setObjectName("constraint" + str(j))
@@ -197,9 +197,9 @@ class Ui_MainWindow(object):
             q.setFont(font)
             self.constraintSigns.append(q)
 
-            ans = QtWidgets.QSpinBox(parent=constraints_widget)
-            x.setMinimum(-100000)
-            x.setMaximum(100000)
+            ans = QtWidgets.QDoubleSpinBox(parent=constraints_widget)
+            ans.setMinimum(-100000)
+            ans.setMaximum(100000)
             ans.setObjectName("ans sign" + str(i))
             ans.setGeometry(QtCore.QRect(1100, 20+40*i, 40, 20))
             ans.setFont(font)
