@@ -101,6 +101,10 @@ class BigM2:
                     self.steps += 'No solution\n'
                     return False
 
+        self.steps += f"Max values of variables: {x}\n"
+        self.steps += f"Final value of Z: {y}\n"
+        self.steps += f"Status: {z}\n"
+
         return True
 
 
