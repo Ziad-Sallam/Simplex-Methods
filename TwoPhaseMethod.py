@@ -147,23 +147,23 @@ class TwoPhaseMethod(object):
         print("heeeeee")
 
 
-A = [
-    [1,-1],
-    [-1,1]
-]
-b = [-1, -1]
-Z = [2, 3]
-urv =[0,0]
-signs = ['<=', '<=']
-
-p = TwoPhaseMethod(A,b,Z,urv,signs,1)
-p.initialTableau()
-if p.phaseOne():
-    p.phaseTwo()
-    print(p.steps)
-else:
-    print(p.steps)
-    print("no solution")
+# A = [
+#     [1,-1],
+#     [-1,1]
+# ]
+# b = [-1, -1]
+# Z = [2, 3]
+# urv =[0,0]
+# signs = ['<=', '<=']
+#
+# p = TwoPhaseMethod(A,b,Z,urv,signs,1)
+# p.initialTableau()
+# if p.phaseOne():
+#     p.phaseTwo()
+#     print(p.steps)
+# else:
+#     print(p.steps)
+#     print("no solution")
 
 
 

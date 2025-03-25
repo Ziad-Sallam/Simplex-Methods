@@ -143,6 +143,8 @@ class Ui_MainWindow(object):
 
             ans = QtWidgets.QSpinBox(parent=objective_widget)
             ans.setObjectName("ans sign" + str(j))
+            ans.setMinimum(-100000)
+            ans.setMaximum(100000)
             ans.setGeometry(QtCore.QRect(1100, 20 + 40 * j, 40, 20))
             ans.setFont(font)
             self.goalValues.append(ans)

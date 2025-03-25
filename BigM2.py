@@ -99,16 +99,16 @@ class BigM2:
         return True
 
 
-A = [
-    [1,1,1],
-    [2,-5,1]
-]
-b = [7,10]
-Z = [1,2,1]
-urv =[0,1]
-signs = ['=','>=']
-x = BigM2(A, b, Z, urv, signs, 1)
-x.initialTableau()
-x.solve()
+# A = [
+#     [1,1,1],
+#     [2,-5,1]
+# ]
+# b = [7,10]
+# Z = [1,2,1]
+# urv =[0,1]
+# signs = ['=','>=']
+# x = BigM2(A, b, Z, urv, signs, 1)
+# x.initialTableau()
+# x.solve()
 
 

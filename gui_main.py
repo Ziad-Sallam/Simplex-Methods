@@ -1,8 +1,12 @@
 import sys
 import subprocess
+
+import numpy as np
+
 import simplex
 from TwoPhaseMethod import TwoPhaseMethod
 from gui import *
+from preemptiveGP import PreemptiveGP
 from simplex import Simplex
 from BigM2 import BigM2
 
@@ -61,6 +65,7 @@ def handleMethodChange():
     if ui.Method.currentText() == 'Preemptive Goal Programming':
         ui.numberOfObjectiveLabel.show()
         ui.numberOfObjectives.show()
+        ui.numberOfConstraints.setMinimum(0)
         for i in range(ui.numberOfObjectives.value()):
             ui.goalValues[i].show()
             ui.goalSigns[i].show()
@@ -70,6 +75,7 @@ def handleMethodChange():
         ui.numberOfObjectiveLabel.hide()
         ui.numberOfObjectives.hide()
         ui.numberOfObjectives.setValue(1)
+        ui.numberOfConstraints.setMinimum(1)
         for i in range(len(ui.goalValues)):
             ui.goalValues[i].hide()
             ui.goalSigns[i].hide()
@@ -107,6 +113,7 @@ def solve():
             signs.append('>=')
         else:
             signs.append('=')
+    print('aaaaaaddddddddsssssssss')
 
     method = ui.Method.currentText()
     if method == 'Simple Simplex':
@@ -145,6 +152,42 @@ def solve():
         p.solve()
         ans += 'steps:\n'
         ans += p.steps
+
+    elif method == 'Preemptive Goal Programming':
+        goalCoff = []
+        goalSigns = []
+        for i in range(ui.numberOfObjectives.value()):
+            goalCoff.append(ui.goalValues[i].value())
+            if ui.goalSigns[i].currentText() == '≥':
+                goalSigns.append('>=')
+            elif ui.goalSigns[i].currentText() == '≤':
+                goalSigns.append('<=')
+            else:
+                goalSigns.append('=')
+
+        print(Z)
+        print(goalCoff)
+        print(A)
+        print(b)
+        print(goalSigns)
+        print(urv)
+        Z = np.array(Z)
+        preemptive = PreemptiveGP(Z,goalCoff,A,b,urv,goalSigns)
+        print("herere")
+        preemptive.initialTableau()
+        preemptive.addURV()
+        preemptive.setGoals()
+
+        preemptive.ansSetup()
+        print("hello")
+        ans +=f"{preemptive.G[0]}\n"
+
+        ans += f"{preemptive.tableau[0]}\n"
+        maxvalues, status = preemptive.method()
+
+        ans += f"{status}\n"
+        ans+= f"{maxvalues}\n"
+        ans+=f"{preemptive.steps}\n"
 
     with open("ans.txt", "w") as f:
         f.write(ans)
